@@ -1,4 +1,4 @@
-import { parseUnits, createWalletClient, http, getContract, erc20Abi } from "viem";
+import { parseUnits, createWalletClient, createPublicClient, http, getContract, erc20Abi } from "viem";
 import { base } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
 import { readJson, writeJson } from "./fs.mjs";
@@ -62,6 +62,10 @@ export async function fundWallets(options) {
     chain: base,
     transport: http(options.rpcUrl)
   });
+  const publicClient = createPublicClient({
+    chain: base,
+    transport: http(options.rpcUrl)
+  });
   const token = getContract({
     address: options.token,
     abi: erc20Abi,
@@ -72,13 +76,31 @@ export async function fundWallets(options) {
   const transfers = [];
   for (const recipient of plan.recipients) {
     const amount = parseUnits(String(recipient.usdc), decimals);
+    const currentBalance = await publicClient.readContract({
+      address: options.token,
+      abi: erc20Abi,
+      functionName: "balanceOf",
+      args: [recipient.address]
+    });
+    if (currentBalance >= amount) {
+      transfers.push({
+        id: recipient.id,
+        address: recipient.address,
+        amount: recipient.usdc,
+        token: options.token,
+        status: "skipped-already-funded"
+      });
+      continue;
+    }
     const hash = await token.write.transfer([recipient.address, amount]);
+    const receipt = await publicClient.waitForTransactionReceipt({ hash });
     transfers.push({
       id: recipient.id,
       address: recipient.address,
       amount: recipient.usdc,
       token: options.token,
-      hash
+      hash,
+      status: receipt.status
     });
   }
 
@@ -90,4 +112,3 @@ export async function fundWallets(options) {
     transfers
   };
 }
-
