@@ -15,6 +15,7 @@ import { readJson, writeJson } from "./fs.mjs";
 
 const FUNDING_APPROVAL_PHRASE = "I_APPROVE_RESOLVEBOTS_X402_FUNDING";
 const SWEEP_APPROVAL_PHRASE = "I_APPROVE_RESOLVEBOTS_X402_SWEEP";
+const ROUNDTRIP_APPROVAL_PHRASE = "I_APPROVE_RESOLVEBOTS_X402_ROUNDTRIP";
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -275,5 +276,141 @@ export async function sweepWallets(options) {
     dryRun: false,
     parent: parent.address,
     transfers
+  };
+}
+
+export async function roundtripWallets(options) {
+  const walletSet = await readJson(options.privateWallets);
+  const limit = Math.min(Number(options.limit || 100), walletSet.wallets.length);
+  const decimals = Number(options.decimals || 6);
+  const amount = parseUnits(String(options.amountUsdc || "0.10"), decimals);
+  const rpcUrl = options.rpcUrl || "https://base-rpc.publicnode.com";
+  const publicClient = createPublicClient({
+    chain: base,
+    transport: http(rpcUrl)
+  });
+
+  const planned = [];
+  for (const wallet of walletSet.wallets.slice(0, limit)) {
+    const startingBalance = await readTokenBalanceWithRetry(publicClient, options.token, wallet.address);
+    planned.push({
+      id: wallet.id,
+      role: wallet.role,
+      parent: options.parent,
+      child: wallet.address,
+      token: options.token,
+      amountAtomic: amount.toString(),
+      startingChildBalanceAtomic: startingBalance.toString(),
+      status: "planned"
+    });
+  }
+
+  if (!options.live) {
+    return {
+      ok: true,
+      dryRun: true,
+      message: "No funds moved. Re-run with --live after explicit approval.",
+      wallets: planned
+    };
+  }
+
+  if (process.env.RESOLVEBOTS_ROUNDTRIP_APPROVAL !== ROUNDTRIP_APPROVAL_PHRASE) {
+    throw new Error(`Refusing to round-trip wallets. Set RESOLVEBOTS_ROUNDTRIP_APPROVAL=${ROUNDTRIP_APPROVAL_PHRASE} after explicit approval.`);
+  }
+  if (!process.env.PARENT_PRIVATE_KEY) {
+    throw new Error("Refusing to round-trip wallets without PARENT_PRIVATE_KEY.");
+  }
+
+  const parent = privateKeyToAccount(process.env.PARENT_PRIVATE_KEY);
+  if (parent.address.toLowerCase() !== options.parent.toLowerCase()) {
+    throw new Error(`PARENT_PRIVATE_KEY address ${parent.address} does not match --parent ${options.parent}.`);
+  }
+
+  const client = createWalletClient({
+    account: parent,
+    chain: base,
+    transport: http(rpcUrl)
+  });
+  const token = getContract({
+    address: options.token,
+    abi: erc20Abi,
+    client
+  });
+  const now = Math.floor(Date.now() / 1000);
+  const domain = {
+    name: "USD Coin",
+    version: "2",
+    chainId: base.id,
+    verifyingContract: options.token
+  };
+
+  const results = [];
+  for (const plan of planned) {
+    const child = walletSet.wallets.find(wallet => wallet.id === plan.id);
+    const childAccount = privateKeyToAccount(child.privateKey);
+    const startingBalance = BigInt(plan.startingChildBalanceAtomic);
+
+    const sendHash = await token.write.transfer([childAccount.address, amount]);
+    const sendReceipt = await publicClient.waitForTransactionReceipt({ hash: sendHash });
+    const afterSendBalance = await readTokenBalanceWithRetry(publicClient, options.token, childAccount.address);
+    const sweepAmount = afterSendBalance > startingBalance ? afterSendBalance - startingBalance : 0n;
+    if (sweepAmount !== amount) {
+      throw new Error(`Round-trip amount mismatch for ${plan.id}: expected ${amount}, got ${sweepAmount}`);
+    }
+
+    const validAfter = 0n;
+    const validBefore = BigInt(now + 60 * 60);
+    const nonce = randomNonce();
+    const message = {
+      from: childAccount.address,
+      to: parent.address,
+      value: sweepAmount,
+      validAfter,
+      validBefore,
+      nonce
+    };
+    const signature = await childAccount.signTypedData({
+      domain,
+      types: authorizationTypes,
+      primaryType: "TransferWithAuthorization",
+      message
+    });
+    const { v, r, s } = signatureParts(signature);
+    const sweepHash = await client.writeContract({
+      address: options.token,
+      abi: eip3009ABI,
+      functionName: "transferWithAuthorization",
+      args: [
+        childAccount.address,
+        parent.address,
+        sweepAmount,
+        validAfter,
+        validBefore,
+        nonce,
+        v,
+        r,
+        s
+      ]
+    });
+    const sweepReceipt = await publicClient.waitForTransactionReceipt({ hash: sweepHash });
+    const finalBalance = await readTokenBalanceWithRetry(publicClient, options.token, childAccount.address);
+    results.push({
+      ...plan,
+      afterSendChildBalanceAtomic: afterSendBalance.toString(),
+      finalChildBalanceAtomic: finalBalance.toString(),
+      sendHash,
+      sendStatus: sendReceipt.status,
+      sweepHash,
+      sweepStatus: sweepReceipt.status,
+      validated: finalBalance === startingBalance && sendReceipt.status === "success" && sweepReceipt.status === "success"
+    });
+  }
+
+  return {
+    ok: results.every(result => result.validated),
+    dryRun: false,
+    parent: parent.address,
+    amountAtomic: amount.toString(),
+    results
   };
 }

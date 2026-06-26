@@ -2,7 +2,7 @@
 
 import { Command } from "commander";
 import { createWalletSet, writeWalletSet } from "../src/wallets.mjs";
-import { buildFundingPlan, fundWallets, sweepWallets } from "../src/funding.mjs";
+import { buildFundingPlan, fundWallets, roundtripWallets, sweepWallets } from "../src/funding.mjs";
 import { runCampaignPurchases } from "../src/campaign.mjs";
 import { checkDiscovery } from "../src/discovery.mjs";
 import { buildReport } from "../src/report.mjs";
@@ -72,6 +72,22 @@ program
   .option("--live", "actually submit sweep transactions")
   .action(async options => {
     const result = await sweepWallets(options);
+    console.log(JSON.stringify(result, null, 2));
+  });
+
+program
+  .command("funding:roundtrip")
+  .description("Guarded parent-child-parent USDC round-trip test before wallet validation")
+  .requiredOption("--private-wallets <path>", "private wallet manifest from wallets:create")
+  .requiredOption("--parent <address>", "parent funding wallet address")
+  .requiredOption("--token <address>", "ERC-20 token contract address, e.g. USDC on Base")
+  .option("--rpc-url <url>", "EVM RPC URL", process.env.BASE_RPC_URL || "https://base-rpc.publicnode.com")
+  .option("--decimals <number>", "token decimals", "6")
+  .option("--amount-usdc <amount>", "USDC amount to send out and sweep back for each child", "0.10")
+  .option("--limit <number>", "max wallets to test", "100")
+  .option("--live", "actually submit round-trip transactions")
+  .action(async options => {
+    const result = await roundtripWallets(options);
     console.log(JSON.stringify(result, null, 2));
   });
 
