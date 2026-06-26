@@ -39,6 +39,18 @@ async function readTokenBalanceWithRetry(publicClient, token, address, attempts 
   throw lastError;
 }
 
+async function waitForTokenBalance(publicClient, token, address, expectedBalance, attempts = 8) {
+  let balance = 0n;
+  for (let index = 0; index < attempts; index += 1) {
+    balance = await readTokenBalanceWithRetry(publicClient, token, address);
+    if (balance === expectedBalance) {
+      return balance;
+    }
+    await sleep(1000 * (index + 1));
+  }
+  return balance;
+}
+
 export async function buildFundingPlan(options) {
   const publicWallets = await readJson(options.publicWallets);
   const usdcPerWallet = String(options.usdcPerWallet || "1.00");
@@ -393,7 +405,7 @@ export async function roundtripWallets(options) {
       ]
     });
     const sweepReceipt = await publicClient.waitForTransactionReceipt({ hash: sweepHash });
-    const finalBalance = await readTokenBalanceWithRetry(publicClient, options.token, childAccount.address);
+    const finalBalance = await waitForTokenBalance(publicClient, options.token, childAccount.address, startingBalance);
     results.push({
       ...plan,
       afterSendChildBalanceAtomic: afterSendBalance.toString(),
