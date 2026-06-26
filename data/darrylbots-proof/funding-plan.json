@@ -1,0 +1,88 @@
+{
+  "campaign": "darrylbots-proof",
+  "createdAt": "2026-06-26T17:47:45.438Z",
+  "network": "eip155:8453",
+  "status": "planned-not-funded",
+  "disclosure": "Funding plan for ResolveBots sponsored test wallets. Creating this file does not move funds.",
+  "perWallet": {
+    "usdc": "1.00",
+    "ethGasBuffer": "0"
+  },
+  "totals": {
+    "wallets": 10,
+    "usdc": "10.000000",
+    "ethGasBuffer": "0.000000000000000000"
+  },
+  "recipients": [
+    {
+      "id": "darrylbots-proof-wallet-01",
+      "role": "metadata-auditor",
+      "address": "0x98f1426FF8AD39446C599ABC2AbCFb9E41D85964",
+      "usdc": "1.00",
+      "ethGasBuffer": "0"
+    },
+    {
+      "id": "darrylbots-proof-wallet-02",
+      "role": "stock-agent",
+      "address": "0x2319754461120818c0c36b65c056CaeC473eb4EC",
+      "usdc": "1.00",
+      "ethGasBuffer": "0"
+    },
+    {
+      "id": "darrylbots-proof-wallet-03",
+      "role": "price-checker",
+      "address": "0xec7FEAce630bd9A4aF2a7C2cF2ED117A663c12Ca",
+      "usdc": "1.00",
+      "ethGasBuffer": "0"
+    },
+    {
+      "id": "darrylbots-proof-wallet-04",
+      "role": "latency-checker",
+      "address": "0x338b690BF9898998481d273D11592E491175b538",
+      "usdc": "1.00",
+      "ethGasBuffer": "0"
+    },
+    {
+      "id": "darrylbots-proof-wallet-05",
+      "role": "report-reader",
+      "address": "0xB30298420761D83aC8D7e45E7B70187F9051A53D",
+      "usdc": "1.00",
+      "ethGasBuffer": "0"
+    },
+    {
+      "id": "darrylbots-proof-wallet-06",
+      "role": "workflow-agent",
+      "address": "0xb63eAC0a44F4c020EE76d781154F46fd4bf5D3D5",
+      "usdc": "1.00",
+      "ethGasBuffer": "0"
+    },
+    {
+      "id": "darrylbots-proof-wallet-07",
+      "role": "api-integrator",
+      "address": "0x423754a1fCb5bff1ffC382F07EbD8C6247474688",
+      "usdc": "1.00",
+      "ethGasBuffer": "0"
+    },
+    {
+      "id": "darrylbots-proof-wallet-08",
+      "role": "marketplace-reviewer",
+      "address": "0x7AAa1434069dF2070532cfEF4B59F59bf7284246",
+      "usdc": "1.00",
+      "ethGasBuffer": "0"
+    },
+    {
+      "id": "darrylbots-proof-wallet-09",
+      "role": "qa-agent",
+      "address": "0x5Eba612b1d69Df698a61A35787a2eBDEE73E2E58",
+      "usdc": "1.00",
+      "ethGasBuffer": "0"
+    },
+    {
+      "id": "darrylbots-proof-wallet-10",
+      "role": "launch-observer",
+      "address": "0x085da0f61A245B6d28FC824Acb54E776d361c389",
+      "usdc": "1.00",
+      "ethGasBuffer": "0"
+    }
+  ]
+}

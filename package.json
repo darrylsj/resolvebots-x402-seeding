@@ -1,0 +1,31 @@
+{
+  "name": "resolvebots-x402-seeding",
+  "version": "0.1.0",
+  "description": "ResolveBots x402 launch seeding and testing harness for disclosed paid-agent trial campaigns.",
+  "type": "module",
+  "bin": {
+    "resolvebots-x402-seed": "./bin/resolvebots-x402-seed.mjs"
+  },
+  "scripts": {
+    "start": "node ./bin/resolvebots-x402-seed.mjs",
+    "wallets": "node ./bin/resolvebots-x402-seed.mjs wallets:create --campaign darrylbots-proof --count 10",
+    "check": "node --check ./bin/resolvebots-x402-seed.mjs && node --check ./src/wallets.mjs && node --check ./src/campaign.mjs && node --check ./src/funding.mjs && node --check ./src/report.mjs && node --check ./src/discovery.mjs"
+  },
+  "keywords": [
+    "resolvebots",
+    "x402",
+    "agent-commerce",
+    "seeding",
+    "testing"
+  ],
+  "author": "Darrylbots LLC",
+  "license": "MIT",
+  "dependencies": {
+    "@x402/evm": "^2.13.0",
+    "@x402/fetch": "^2.13.0",
+    "commander": "^14.0.2",
+    "viem": "^2.41.2"
+  },
+  "devDependencies": {}
+}
+

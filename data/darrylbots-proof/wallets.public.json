@@ -1,0 +1,88 @@
+{
+  "campaign": "darrylbots-proof",
+  "network": "eip155:8453",
+  "createdAt": "2026-06-26T17:47:33.648Z",
+  "disclosure": "ResolveBots sponsored test wallets for paid-agent launch seeding. These are not organic buyers.",
+  "wallets": [
+    {
+      "id": "darrylbots-proof-wallet-01",
+      "role": "metadata-auditor",
+      "network": "eip155:8453",
+      "address": "0x98f1426FF8AD39446C599ABC2AbCFb9E41D85964",
+      "seededTrafficLabel": "sponsored-test",
+      "createdAt": "2026-06-26T17:47:33.648Z"
+    },
+    {
+      "id": "darrylbots-proof-wallet-02",
+      "role": "stock-agent",
+      "network": "eip155:8453",
+      "address": "0x2319754461120818c0c36b65c056CaeC473eb4EC",
+      "seededTrafficLabel": "sponsored-test",
+      "createdAt": "2026-06-26T17:47:33.648Z"
+    },
+    {
+      "id": "darrylbots-proof-wallet-03",
+      "role": "price-checker",
+      "network": "eip155:8453",
+      "address": "0xec7FEAce630bd9A4aF2a7C2cF2ED117A663c12Ca",
+      "seededTrafficLabel": "sponsored-test",
+      "createdAt": "2026-06-26T17:47:33.648Z"
+    },
+    {
+      "id": "darrylbots-proof-wallet-04",
+      "role": "latency-checker",
+      "network": "eip155:8453",
+      "address": "0x338b690BF9898998481d273D11592E491175b538",
+      "seededTrafficLabel": "sponsored-test",
+      "createdAt": "2026-06-26T17:47:33.648Z"
+    },
+    {
+      "id": "darrylbots-proof-wallet-05",
+      "role": "report-reader",
+      "network": "eip155:8453",
+      "address": "0xB30298420761D83aC8D7e45E7B70187F9051A53D",
+      "seededTrafficLabel": "sponsored-test",
+      "createdAt": "2026-06-26T17:47:33.648Z"
+    },
+    {
+      "id": "darrylbots-proof-wallet-06",
+      "role": "workflow-agent",
+      "network": "eip155:8453",
+      "address": "0xb63eAC0a44F4c020EE76d781154F46fd4bf5D3D5",
+      "seededTrafficLabel": "sponsored-test",
+      "createdAt": "2026-06-26T17:47:33.648Z"
+    },
+    {
+      "id": "darrylbots-proof-wallet-07",
+      "role": "api-integrator",
+      "network": "eip155:8453",
+      "address": "0x423754a1fCb5bff1ffC382F07EbD8C6247474688",
+      "seededTrafficLabel": "sponsored-test",
+      "createdAt": "2026-06-26T17:47:33.648Z"
+    },
+    {
+      "id": "darrylbots-proof-wallet-08",
+      "role": "marketplace-reviewer",
+      "network": "eip155:8453",
+      "address": "0x7AAa1434069dF2070532cfEF4B59F59bf7284246",
+      "seededTrafficLabel": "sponsored-test",
+      "createdAt": "2026-06-26T17:47:33.648Z"
+    },
+    {
+      "id": "darrylbots-proof-wallet-09",
+      "role": "qa-agent",
+      "network": "eip155:8453",
+      "address": "0x5Eba612b1d69Df698a61A35787a2eBDEE73E2E58",
+      "seededTrafficLabel": "sponsored-test",
+      "createdAt": "2026-06-26T17:47:33.648Z"
+    },
+    {
+      "id": "darrylbots-proof-wallet-10",
+      "role": "launch-observer",
+      "network": "eip155:8453",
+      "address": "0x085da0f61A245B6d28FC824Acb54E776d361c389",
+      "seededTrafficLabel": "sponsored-test",
+      "createdAt": "2026-06-26T17:47:33.648Z"
+    }
+  ]
+}

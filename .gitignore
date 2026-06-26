@@ -1,0 +1,12 @@
+node_modules/
+.DS_Store
+.env
+.env.*
+.secrets/
+data/**/wallets.private.json
+data/**/*.private.json
+data/**/*.jsonl
+reports/**/*.json
+reports/**/*.jsonl
+reports/**/*.html
+

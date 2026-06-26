@@ -1,0 +1,22 @@
+{
+  "campaign": "darrylbots-proof",
+  "seller": "Darrylbots",
+  "operator": "ResolveBots",
+  "trafficLabel": "sponsored-test",
+  "disclosure": "ResolveBots sponsored x402 launch-seeding test traffic. Not organic buyer adoption.",
+  "endpoints": [
+    "https://darrylbots.com/api/research-report-standard",
+    "https://darrylbots.com/api/research-report-abundance",
+    "https://darrylbots.com/api/research-report-hail-mary"
+  ],
+  "wallets": 10,
+  "network": "eip155:8453",
+  "successMetrics": [
+    "10 labelled test wallets created",
+    "funding plan generated before any transfer",
+    "x402 402 challenge observed in dry-run",
+    "live purchases only after explicit funding approval",
+    "seeded-vs-organic report generated"
+  ]
+}
+
