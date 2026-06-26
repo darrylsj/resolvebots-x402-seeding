@@ -61,6 +61,31 @@ npm run start -- funding:send \
   --live
 ```
 
+## Sweep Child Wallets Back to Parent
+
+Child wallets do not need Base ETH for this path. They sign USDC EIP-3009 authorizations, and the parent wallet submits the sweep transactions and pays gas.
+
+Dry-run:
+
+```bash
+npm run start -- funding:sweep \
+  --private-wallets .secrets/darrylbots-proof/wallets.private.json \
+  --to 0x09e0fFB92fdf9e9422b71b5B90E7d4edEbb77FE0 \
+  --token 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
+```
+
+Live sweep requires explicit approval and both safety gates:
+
+```bash
+RESOLVEBOTS_SWEEP_APPROVAL=I_APPROVE_RESOLVEBOTS_X402_SWEEP \
+PARENT_PRIVATE_KEY=0x... \
+npm run start -- funding:sweep \
+  --private-wallets .secrets/darrylbots-proof/wallets.private.json \
+  --to 0x09e0fFB92fdf9e9422b71b5B90E7d4edEbb77FE0 \
+  --token 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 \
+  --live
+```
+
 ## Dry-Run a Darrylbots x402 Endpoint
 
 ```bash
@@ -98,4 +123,3 @@ npm run start -- report:build \
 ## ResolveBots Offering
 
 See `docs/resolvebots-offering.md`.
-

@@ -2,7 +2,7 @@
 
 import { Command } from "commander";
 import { createWalletSet, writeWalletSet } from "../src/wallets.mjs";
-import { buildFundingPlan, fundWallets } from "../src/funding.mjs";
+import { buildFundingPlan, fundWallets, sweepWallets } from "../src/funding.mjs";
 import { runCampaignPurchases } from "../src/campaign.mjs";
 import { checkDiscovery } from "../src/discovery.mjs";
 import { buildReport } from "../src/report.mjs";
@@ -51,11 +51,27 @@ program
   .description("Guarded live ERC-20 funding transfer to child test wallets")
   .requiredOption("--plan <path>", "funding plan JSON from funding:plan")
   .requiredOption("--token <address>", "ERC-20 token contract address, e.g. USDC on Base")
-  .option("--rpc-url <url>", "EVM RPC URL", process.env.BASE_RPC_URL || "https://mainnet.base.org")
+  .option("--rpc-url <url>", "EVM RPC URL", process.env.BASE_RPC_URL || "https://base-rpc.publicnode.com")
   .option("--decimals <number>", "token decimals", "6")
   .option("--live", "actually send transfers")
   .action(async options => {
     const result = await fundWallets(options);
+    console.log(JSON.stringify(result, null, 2));
+  });
+
+program
+  .command("funding:sweep")
+  .description("Guarded live USDC sweep from child wallets back to a parent wallet using EIP-3009 authorizations")
+  .requiredOption("--private-wallets <path>", "private wallet manifest from wallets:create")
+  .requiredOption("--to <address>", "parent wallet address to receive swept funds")
+  .requiredOption("--token <address>", "ERC-20 token contract address, e.g. USDC on Base")
+  .option("--rpc-url <url>", "EVM RPC URL", process.env.BASE_RPC_URL || "https://base-rpc.publicnode.com")
+  .option("--decimals <number>", "token decimals", "6")
+  .option("--reserve-usdc <amount>", "USDC to leave in each child wallet", "0")
+  .option("--limit <number>", "max wallets to sweep", "100")
+  .option("--live", "actually submit sweep transactions")
+  .action(async options => {
+    const result = await sweepWallets(options);
     console.log(JSON.stringify(result, null, 2));
   });
 
@@ -99,4 +115,3 @@ program.parseAsync(process.argv).catch(error => {
   console.error(error?.stack || error?.message || String(error));
   process.exitCode = 1;
 });
-
